@@ -1,8 +1,8 @@
 * Startup
 ** Package initialize
 #+BEGIN_SRC emacs-lisp :tangle yes
-(package-initialize)
 (require 'package)
+(package-initialize)
 (add-to-list 'package-archives
 	     '("melpa" . "http://melpa.org/packages/")
 	     '("elpy" . "http://jorgenschaefer.github.io/packages/"))

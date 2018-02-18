@@ -1,5 +1,5 @@
-(package-initialize)
 (require 'package)
+(package-initialize)
 (add-to-list 'package-archives
 	     '("melpa" . "http://melpa.org/packages/")
 	     '("elpy" . "http://jorgenschaefer.github.io/packages/"))
