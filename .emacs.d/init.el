@@ -1,5 +1,3 @@
-;; Test
-
 ;;PACKAGE INITIALIZE
 (package-initialize)
 (require 'package)
@@ -70,6 +68,12 @@
 (setq org-refile-allow-creating-parent-nodes 'confirm)
 
 (setq org-archive-location "archive/datetree.org::datetree/* Finished Tasks")
+
+(eval-after-load 'org
+  '(progn
+     (add-to-list 'org-structure-template-alist
+		  '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
+
 
 ;; Personal INFORMATION
 (setq user-full-name "Scott Trinkle")
