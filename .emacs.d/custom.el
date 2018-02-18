@@ -77,7 +77,8 @@
       nil nil)
      ("n" "Agenda and all NEXT, STARTED and WAITING actions"
       ((agenda ""
-	       ((org-agenda-start-on-weekday nil)))
+	       ((org-agenda-start-on-weekday nil)
+		(org-agenda-span 1)))
        (todo "NEXT"
 	     ((org-agenda-overriding-header "Unscheduled Next Actions")
 	      (org-agenda-tag-filter-preset

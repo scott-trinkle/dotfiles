@@ -70,6 +70,7 @@
 
 ;; Custom behavior
 (setq org-startup-truncated nil)  ;; wrap lines
+(setq org-startup-indented t)
 (setq org-agenda-restore-windows-after-quit t)  ;; save window views
 (eval-after-load 'org  ;; shortcut for creating elisp src
   '(progn
@@ -91,20 +92,6 @@
 
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
-
-;; Diplay magit status in current window
-(setq magit-display-buffer-function
-      (lambda (buffer)
-        (display-buffer
-         buffer (if (and (derived-mode-p 'magit-mode)
-                         (memq (with-current-buffer buffer major-mode)
-                               '(magit-process-mode
-                                 magit-revision-mode
-                                 magit-diff-mode
-                                 magit-stash-mode
-                                 magit-status-mode)))
-                    nil
-                  '(display-buffer-same-window)))))
 
 (elpy-enable)
 
@@ -234,12 +221,11 @@
 ;; Display settings
 (setq mac-allow-anti-aliasing t)
 
-;;(set-face-attribute 'default nil :height 135)
-(add-to-list 'default-frame-alist '(font . "Monaco 12"))
+(add-to-list 'default-frame-alist '(font . "Monaco 13"))
 (if (string-equal system-type "darwin")
-    (set-fontset-font "fontset-default"
-                      'unicode
-                      '("Monaco" . "iso10646-1")))
+(set-fontset-font "fontset-default"
+'unicode
+'("Monaco" . "iso10646-1")))
 
 (setq frame-resize-pixelwise 'true)
 (setq line-spacing 0)
@@ -411,8 +397,7 @@ i.e. change right window to bottom, or change bottom window to right."
 
 (when window-system (set-frame-size (selected-frame) 180 48))
 (find-file "~/GoogleDrive/org/projects.org")
-(shell "*shell1*")
-(switch-to-buffer "projects.org")
-(org-agenda-list)
-(balance-windows)
-(other-window 1)
+(find-file "~/.emacs.d/scott.org")
+(shell "*shell*")
+(add-hook 'after-init-hook (lambda () (org-agenda nil "n")))
+(switch-to-buffer "*Org Agenda*")

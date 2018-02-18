@@ -16,14 +16,15 @@
 #+END_SRC
 * Modes
 ** Abbrev
-Sort of like a custom autocorrect. Not currently implemented, but
-borrowing this from Talon's in case I'm ever interested. 
-#+BEGIN_SRC emacs-lisp :tangle yes 
-(setq abbrev-file-name "~/.emacs.d/abbrev_defs")
-(setq save-abbrevs t)
-#+END_SRC
+ Sort of like a custom autocorrect. Not currently implemented, but
+ borrowing this from Talon's in case I'm ever interested. 
+ #+BEGIN_SRC emacs-lisp :tangle yes 
+ (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
+ (setq save-abbrevs t)
+ #+END_SRC
 ** Org-mode
 #+BEGIN_SRC emacs-lisp :tangle yes
+
 (setq org-directory "/Users/scotttrinkle/GoogleDrive/org/")
 
 ;; TODOs
@@ -82,6 +83,7 @@ borrowing this from Talon's in case I'm ever interested.
 
 ;; Custom behavior
 (setq org-startup-truncated nil)  ;; wrap lines
+(setq org-startup-indented t)
 (setq org-agenda-restore-windows-after-quit t)  ;; save window views
 (eval-after-load 'org  ;; shortcut for creating elisp src
   '(progn
@@ -107,22 +109,8 @@ borrowing this from Talon's in case I'm ever interested.
 #+END_SRC
 ** Magit
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(global-set-key (kbd "C-x g") 'magit-status)
-(global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
-
-;; Diplay magit status in current window
-(setq magit-display-buffer-function
-      (lambda (buffer)
-        (display-buffer
-         buffer (if (and (derived-mode-p 'magit-mode)
-                         (memq (with-current-buffer buffer major-mode)
-                               '(magit-process-mode
-                                 magit-revision-mode
-                                 magit-diff-mode
-                                 magit-stash-mode
-                                 magit-status-mode)))
-                    nil
-                  '(display-buffer-same-window)))))
+  (global-set-key (kbd "C-x g") 'magit-status)
+  (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
 #+END_SRC
 ** Python
 #+BEGIN_SRC emacs-lisp :tangle yes 
@@ -277,12 +265,12 @@ borrowing this from Talon's in case I'm ever interested.
 #+END_SRC
 ** Font
 #+BEGIN_SRC emacs-lisp :tangle yes 
-;;(set-face-attribute 'default nil :height 135)
-(add-to-list 'default-frame-alist '(font . "Monaco 12"))
+
+(add-to-list 'default-frame-alist '(font . "Monaco 13"))
 (if (string-equal system-type "darwin")
-    (set-fontset-font "fontset-default"
-                      'unicode
-                      '("Monaco" . "iso10646-1")))
+(set-fontset-font "fontset-default"
+'unicode
+'("Monaco" . "iso10646-1")))
 
 (setq frame-resize-pixelwise 'true)
 (setq line-spacing 0)
@@ -501,9 +489,8 @@ i.e. change right window to bottom, or change bottom window to right."
 #+BEGIN_SRC emacs-lisp :tangle yes 
 (when window-system (set-frame-size (selected-frame) 180 48))
 (find-file "~/GoogleDrive/org/projects.org")
-(shell "*shell1*")
-(switch-to-buffer "projects.org")
-(org-agenda-list)
-(balance-windows)
-(other-window 1)
+(find-file "~/.emacs.d/scott.org")
+(shell "*shell*")
+(add-hook 'after-init-hook (lambda () (org-agenda nil "n")))
+(switch-to-buffer "*Org Agenda*")
 #+END_SRC
