@@ -25,70 +25,73 @@
 ** Org-mode
 #+BEGIN_SRC emacs-lisp :tangle yes
 
-(setq org-directory "/Users/scotttrinkle/GoogleDrive/org/")
+  (setq org-directory "/Users/scotttrinkle/GoogleDrive/org/")
 
-;; TODOs
-(setq org-todo-keywords
-        '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w)" "|" "CANCELED(c)" "DONE(d)")))
+  ;; Key bindings
+  (global-set-key (kbd "C-c l") 'org-store-link)
+  (global-set-key (kbd "C-c a") 'org-agenda)
+  (global-set-key (kbd "C-c c") 'org-capture)
+  (global-set-key (kbd "C-c b") 'org-iswitchb)
 
-(setq org-todo-keyword-faces
-      '(("TODO" . "pink")
-        ("NEXT" . "blue")
-        ("STARTED" . "yellow")
-        ("WAITING" . "orange")
-        ("CANCELED" . "red")
-        ("DONE" . "green")))
+  ;; TODOs
+  (setq org-todo-keywords
+          '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w)" "|" "CANCELED(c)" "DONE(d)")))
 
-(defun org-summary-todo (n-done n-not-done)
-  "Switch entry to DONE when all subentries are done, to TODO otherwise."
-  (let (org-log-done org-log-states)  ; turn off logging
-    (org-todo (if (= n-not-done 0) "DONE" "TODO" ))))
-(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+  (setq org-todo-keyword-faces
+        '(("TODO" . "pink")
+          ("NEXT" . "blue")
+          ("STARTED" . "yellow")
+          ("WAITING" . "orange")
+          ("CANCELED" . "red")
+          ("DONE" . "green")))
 
-(setq org-enforce-todo-dependencies t)
-(setq org-log-done 'time)
+  (defun org-summary-todo (n-done n-not-done)
+    "Switch entry to DONE when all subentries are done, to TODO otherwise."
+    (let (org-log-done org-log-states)  ; turn off logging
+      (org-todo (if (= n-not-done 0) "DONE" "TODO" ))))
+  (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
-;; Tags
-(setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("someday" . ?s)))
-(setq org-tags-column -85)
+  (setq org-enforce-todo-dependencies t)
+  (setq org-log-done 'time)
 
-;; Agenda
-(setq org-default-notes-file "projects.org")
-(setq org-agenda-files (quote ("~/GoogleDrive/org/" "~/GoogleDrive/org/projects.org" "~/GoogleDrive/org/calendar.org" "~/GoogleDrive/org/someday.org")))
-(setq org-deadline-warning-days 5)          
-(setq org-archive-location "archive/datetree.org::datetree/* Finished Tasks")
+  ;; Tags
+  (setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("someday" . ?s)))
+  (setq org-tags-column -85)
 
-;; Capture
-(setq org-capture-templates '(("t" "Todo [inbox]" entry
-                               (file+headline "~/GoogleDrive/org/projects.org" "Inbox")
-                               "* %i%?")))
+  ;; Agenda
+  (setq org-default-notes-file "projects.org")
+  (setq org-agenda-files (quote ("~/GoogleDrive/org/" "~/GoogleDrive/org/projects.org" "~/GoogleDrive/org/calendar.org" "~/GoogleDrive/org/someday.org")))
+  (setq org-deadline-warning-days 5)          
+  (setq org-archive-location "archive/datetree.org::datetree/* Finished Tasks")
 
-;; Refiling
-(setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
-(setq org-refile-use-outline-path 'file)
-;;(setq org-outline-path-complete-in-steps nil)
-(setq org-refile-allow-creating-parent-nodes 'confirm)
+  ;; Capture
+  (setq org-capture-templates 
+        (quote
+         (("t" "Todo [inbox]" entry (file+headline "~/GoogleDrive/org/projects.org" "Inbox")
+                                 "* %i%?"))))
+
+  ;; Refiling
+  (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
+  (setq org-refile-use-outline-path 'file)
+  ;;(setq org-outline-path-complete-in-steps nil)
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
 
 
-;; Key bindings
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
-(global-set-key (kbd "C-c b") 'org-iswitchb)
 
-(add-hook 'org-load-hook
-          (lambda ()
-            (define-key org-mode-map (kbd "C-c n") 'org-next-link)
-            (define-key org-mode-map (kbd "C-c p") 'org-previous-link)))
 
-;; Custom behavior
-(setq org-startup-truncated nil)  ;; wrap lines
-(setq org-startup-indented t)
-(setq org-agenda-restore-windows-after-quit t)  ;; save window views
-(eval-after-load 'org  ;; shortcut for creating elisp src
-  '(progn
-     (add-to-list 'org-structure-template-alist
-		  '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
+  (add-hook 'org-load-hook
+            (lambda ()
+              (define-key org-mode-map (kbd "C-c n") 'org-next-link)
+              (define-key org-mode-map (kbd "C-c p") 'org-previous-link)))
+
+  ;; Custom behavior
+  (setq org-startup-truncated nil)  ;; wrap lines
+  (setq org-startup-indented t)
+  (setq org-agenda-restore-windows-after-quit t)  ;; save window views
+  (eval-after-load 'org  ;; shortcut for creating elisp src
+    '(progn
+       (add-to-list 'org-structure-template-alist
+                    '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
 
 
 #+END_SRC

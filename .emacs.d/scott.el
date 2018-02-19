@@ -14,6 +14,12 @@
 
 (setq org-directory "/Users/scotttrinkle/GoogleDrive/org/")
 
+;; Key bindings
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+(global-set-key (kbd "C-c b") 'org-iswitchb)
+
 ;; TODOs
 (setq org-todo-keywords
         '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w)" "|" "CANCELED(c)" "DONE(d)")))
@@ -46,9 +52,10 @@
 (setq org-archive-location "archive/datetree.org::datetree/* Finished Tasks")
 
 ;; Capture
-(setq org-capture-templates '(("t" "Todo [inbox]" entry
-                               (file+headline "~/GoogleDrive/org/projects.org" "Inbox")
-                               "* %i%?")))
+(setq org-capture-templates 
+      (quote
+       (("t" "Todo [inbox]" entry (file+headline "~/GoogleDrive/org/projects.org" "Inbox")
+                               "* %i%?"))))
 
 ;; Refiling
 (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
@@ -57,11 +64,7 @@
 (setq org-refile-allow-creating-parent-nodes 'confirm)
 
 
-;; Key bindings
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
-(global-set-key (kbd "C-c b") 'org-iswitchb)
+
 
 (add-hook 'org-load-hook
           (lambda ()
@@ -75,7 +78,7 @@
 (eval-after-load 'org  ;; shortcut for creating elisp src
   '(progn
      (add-to-list 'org-structure-template-alist
-		  '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
+                  '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
 
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
