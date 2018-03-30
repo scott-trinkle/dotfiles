@@ -33,7 +33,7 @@
   (global-set-key (kbd "C-c c") 'org-capture)
   (global-set-key (kbd "C-c b") 'org-iswitchb)
 
-  ;; TODOs
+  ;; TODO Keywords
   (setq org-todo-keywords
           '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w)" "|" "CANCELED(c)" "DONE(d)")))
 
@@ -73,10 +73,7 @@
   ;; Refiling
   (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
   (setq org-refile-use-outline-path 'file)
-  ;;(setq org-outline-path-complete-in-steps nil)
   (setq org-refile-allow-creating-parent-nodes 'confirm)
-
-
 
 
   (add-hook 'org-load-hook
@@ -85,14 +82,24 @@
               (define-key org-mode-map (kbd "C-c p") 'org-previous-link)))
 
   ;; Custom behavior
-  (setq org-startup-truncated nil)  ;; wrap lines
+  ;;(setq org-startup-truncated nil)  ;; wrap lines
   (setq org-startup-indented t)
   (setq org-agenda-restore-windows-after-quit t)  ;; save window views
   (eval-after-load 'org  ;; shortcut for creating elisp src
     '(progn
        (add-to-list 'org-structure-template-alist
                     '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
-
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+                  
+;;Spellcheck
+(defun endless/org-ispell ()
+  "Configure `ispell-skip-region-alist' for `org-mode'."
+  (make-local-variable 'ispell-skip-region-alist)
+  (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+  (add-to-list 'ispell-skip-region-alist '("~" "~"))
+  (add-to-list 'ispell-skip-region-alist '("=" "="))
+  (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
+(add-hook 'org-mode-hook #'endless/org-ispell)
 
 #+END_SRC
 ** Shell
@@ -117,30 +124,71 @@
 #+END_SRC
 ** Python
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(elpy-enable)
+  (elpy-enable)
 
-(setq elpy-rpc-python-command "python3")
-(setq python-shell-interpreter "ipython"
-     python-shell-interpreter-args "--simple-prompt -i")
+  (setq elpy-rpc-python-command "python3")
+  (setq python-shell-interpreter "ipython"
+       python-shell-interpreter-args "--simple-prompt -i")
 
-;; Try this:
-;; (setq python-shell-interpreter "/usr/local/bin/python3")
+  ;; Try this:
+  ;; (setq python-shell-interpreter "/usr/local/bin/python3")
 
-;; this fixes a bug where a readline warning launches
-;;whenever you send a script to the interpreter
-;(setq python-shell-completion-native-enable nil)
+  ;; this fixes a bug where a readline warning launches
+  ;;whenever you send a script to the interpreter
+  ;(setq python-shell-completion-native-enable nil)
 
-;;changes syntax check from flymake to flycheck
-(when (require 'flycheck nil t)
-  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-  (add-hook 'elpy-mode-hook 'flycheck-mode))
+  ;;changes syntax check from flymake to flycheck
+  (when (require 'flycheck nil t)
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    (add-hook 'elpy-mode-hook 'flycheck-mode))
 
-;;activates autopep8
-(require 'py-autopep8)
-(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+  ;;activates autopep8
+  (require 'py-autopep8)
+  (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
 
-(global-set-key (kbd "C-c C-r") 'python-shell-send-region)
-(global-set-key (kbd "C-t") 'transpose-chars)
+  (global-set-key (kbd "C-c C-r") 'python-shell-send-region)
+  (global-set-key (kbd "C-t") 'transpose-chars)
+#+END_SRC
+** Cpp
+
+#+BEGIN_SRC emacs-lisp :tangle yes 
+
+;; Builds C program
+(defun build-c-program ()
+  (interactive)
+  (defvar fn)
+  (setq fn (file-name-sans-extension (buffer-name)))
+  (defvar foo)
+  (setq foo (concat "g++ -o " fn " " (buffer-name)))
+  (save-buffer)
+  (shell-command foo)
+  (shell-command "echo Build successful!"))
+
+;; Builds and runs C program
+(defun execute-c-program ()
+  (interactive)
+  (defvar fn)
+  (setq fn (file-name-sans-extension (buffer-name)))
+  (defvar foo)
+  (setq foo (concat "g++ -o " fn " " (buffer-name)" && ./" fn ))
+  (save-buffer)
+  (shell-command foo))
+
+;; Removes compiled file
+(defun clean-c-program ()
+  (interactive)
+  (defvar fn)
+  (setq fn (file-name-sans-extension (buffer-name)))
+  (defvar foo)
+  (setq foo (concat "rm " fn))
+  (shell-command foo)
+  (shell-command "echo Clean successful!"))
+
+(require 'cc-mode)
+(define-key c++-mode-map (kbd "C-c C-b") 'build-c-program)
+(define-key c++-mode-map (kbd "C-c C-c") 'execute-c-program)
+(define-key c++-mode-map (kbd "C-c C-k") 'clean-c-program)
+
 #+END_SRC
 ** Octave
 #+BEGIN_SRC emacs-lisp :tangle yes 
@@ -173,7 +221,7 @@
   ;; (setenv "PATH"
   ;; 	(concat "/usr/texbin" ":"
   ;; (getenv "PATH")))
-  (setq TeX-PDF-mode t)  ;; This was commented out before
+  (setq TeX-PDF-mode t) 
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
   (setq TeX-save-query nil) ;;autosave before compiling
@@ -210,6 +258,7 @@
 (add-hook 'org-mode-hook 'org-beamer-mode)
 (add-hook 'org-mode-hook (lambda () (diminish 'org-beamer-mode "")))
 (add-hook 'math-mode 'linum-mode)
+
 #+END_SRC
 ** Ido
 #+BEGIN_SRC emacs-lisp :tangle yes 
@@ -311,7 +360,7 @@
 #+END_SRC
 ** Visible bell
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(setq visible-bell t)
+(setq visible-bell 1)
 #+END_SRC
 ** Show line number
 #+BEGIN_SRC emacs-lisp :tangle yes 
