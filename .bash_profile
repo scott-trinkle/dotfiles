@@ -29,3 +29,11 @@ test -f ~/.bashrc && source ~/.bashrc
 # # adds color functionality to "grep"
 # alias grep='grep -i'
 # export GREP_OPTIONS='--color=always'
+
+
+# FSL Setup
+FSLDIR=/usr/local/fsl
+PATH=${FSLDIR}/bin:${PATH}
+export FSLDIR PATH
+. ${FSLDIR}/etc/fslconf/fsl.sh
+
