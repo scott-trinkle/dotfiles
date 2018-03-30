@@ -105,7 +105,7 @@
     ("~/GoogleDrive/org/projects.org" "~/GoogleDrive/org/someday.org" "~/GoogleDrive/org/calendar.org")))
  '(package-selected-packages
    (quote
-    (diminish org-alert pdf-tools org-pdfview pyenv-mode pyenv-mode-auto org-edna ac-octave auctex-latexmk auctex-lua auctex magit flycheck py-autopep8 notmuch emojify mu4e-alert xterm-color cl-lib fill-column-indicator elpy auto-complete)))
+    (flycheck flycheck-cython diminish org-alert pdf-tools org-pdfview pyenv-mode pyenv-mode-auto org-edna ac-octave auctex-latexmk auctex-lua magit py-autopep8 notmuch emojify mu4e-alert xterm-color cl-lib fill-column-indicator elpy auto-complete)))
  '(preview-gs-options
    (quote
     ("-q" "-dNOPAUSE" "-DNOPLATFONTS" "-dPrinted" "-dTextAlphaBits=4" "-dGraphicsAlphaBits=4" "-dSAFER")))

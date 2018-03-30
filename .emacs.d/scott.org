@@ -497,3 +497,16 @@ i.e. change right window to bottom, or change bottom window to right."
 (add-hook 'after-init-hook (lambda () (org-agenda nil "n")))
 (switch-to-buffer "*Org Agenda*")
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes 
+(defun which-active-modes ()
+  "Give a message of which minor modes are enabled in the current buffer."
+  (interactive)
+  (let ((active-modes))
+    (mapc (lambda (mode) (condition-case nil
+                             (if (and (symbolp mode) (symbol-value mode))
+                                 (add-to-list 'active-modes mode))
+                           (error nil) ))
+          minor-mode-list)
+    (message "Active modes are %s" active-modes)))
+#+END_SRC
