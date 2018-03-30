@@ -14,71 +14,79 @@
 
 (setq org-directory "/Users/scotttrinkle/GoogleDrive/org/")
 
-;; Key bindings
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
-(global-set-key (kbd "C-c b") 'org-iswitchb)
+  ;; Key bindings
+  (global-set-key (kbd "C-c l") 'org-store-link)
+  (global-set-key (kbd "C-c a") 'org-agenda)
+  (global-set-key (kbd "C-c c") 'org-capture)
+  (global-set-key (kbd "C-c b") 'org-iswitchb)
 
-;; TODOs
-(setq org-todo-keywords
-        '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w)" "|" "CANCELED(c)" "DONE(d)")))
+  ;; TODO Keywords
+  (setq org-todo-keywords
+          '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w)" "|" "CANCELED(c)" "DONE(d)")))
 
-(setq org-todo-keyword-faces
-      '(("TODO" . "pink")
-        ("NEXT" . "blue")
-        ("STARTED" . "yellow")
-        ("WAITING" . "orange")
-        ("CANCELED" . "red")
-        ("DONE" . "green")))
+  (setq org-todo-keyword-faces
+        '(("TODO" . "pink")
+          ("NEXT" . "blue")
+          ("STARTED" . "yellow")
+          ("WAITING" . "orange")
+          ("CANCELED" . "red")
+          ("DONE" . "green")))
 
-(defun org-summary-todo (n-done n-not-done)
-  "Switch entry to DONE when all subentries are done, to TODO otherwise."
-  (let (org-log-done org-log-states)  ; turn off logging
-    (org-todo (if (= n-not-done 0) "DONE" "TODO" ))))
-(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+  (defun org-summary-todo (n-done n-not-done)
+    "Switch entry to DONE when all subentries are done, to TODO otherwise."
+    (let (org-log-done org-log-states)  ; turn off logging
+      (org-todo (if (= n-not-done 0) "DONE" "TODO" ))))
+  (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
-(setq org-enforce-todo-dependencies t)
-(setq org-log-done 'time)
+  (setq org-enforce-todo-dependencies t)
+  (setq org-log-done 'time)
 
-;; Tags
-(setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("someday" . ?s)))
-(setq org-tags-column -85)
+  ;; Tags
+  (setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("someday" . ?s)))
+  (setq org-tags-column -85)
 
-;; Agenda
-(setq org-default-notes-file "projects.org")
-(setq org-agenda-files (quote ("~/GoogleDrive/org/" "~/GoogleDrive/org/projects.org" "~/GoogleDrive/org/calendar.org" "~/GoogleDrive/org/someday.org")))
-(setq org-deadline-warning-days 5)          
-(setq org-archive-location "archive/datetree.org::datetree/* Finished Tasks")
+  ;; Agenda
+  (setq org-default-notes-file "projects.org")
+  (setq org-agenda-files (quote ("~/GoogleDrive/org/" "~/GoogleDrive/org/projects.org" "~/GoogleDrive/org/calendar.org" "~/GoogleDrive/org/someday.org")))
+  (setq org-deadline-warning-days 5)          
+  (setq org-archive-location "archive/datetree.org::datetree/* Finished Tasks")
 
-;; Capture
-(setq org-capture-templates 
-      (quote
-       (("t" "Todo [inbox]" entry (file+headline "~/GoogleDrive/org/projects.org" "Inbox")
-                               "* %i%?"))))
+  ;; Capture
+  (setq org-capture-templates 
+        (quote
+         (("t" "Todo [inbox]" entry (file+headline "~/GoogleDrive/org/projects.org" "Inbox")
+                                 "* %i%?"))))
 
-;; Refiling
-(setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
-(setq org-refile-use-outline-path 'file)
-;;(setq org-outline-path-complete-in-steps nil)
-(setq org-refile-allow-creating-parent-nodes 'confirm)
-
+  ;; Refiling
+  (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
+  (setq org-refile-use-outline-path 'file)
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
 
 
+  (add-hook 'org-load-hook
+            (lambda ()
+              (define-key org-mode-map (kbd "C-c n") 'org-next-link)
+              (define-key org-mode-map (kbd "C-c p") 'org-previous-link)))
 
-(add-hook 'org-load-hook
-          (lambda ()
-            (define-key org-mode-map (kbd "C-c n") 'org-next-link)
-            (define-key org-mode-map (kbd "C-c p") 'org-previous-link)))
-
-;; Custom behavior
-(setq org-startup-truncated nil)  ;; wrap lines
-(setq org-startup-indented t)
-(setq org-agenda-restore-windows-after-quit t)  ;; save window views
-(eval-after-load 'org  ;; shortcut for creating elisp src
-  '(progn
-     (add-to-list 'org-structure-template-alist
-                  '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
+  ;; Custom behavior
+  ;;(setq org-startup-truncated nil)  ;; wrap lines
+  (setq org-startup-indented t)
+  (setq org-agenda-restore-windows-after-quit t)  ;; save window views
+  (eval-after-load 'org  ;; shortcut for creating elisp src
+    '(progn
+       (add-to-list 'org-structure-template-alist
+                    '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+                  
+;;Spellcheck
+(defun endless/org-ispell ()
+  "Configure `ispell-skip-region-alist' for `org-mode'."
+  (make-local-variable 'ispell-skip-region-alist)
+  (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+  (add-to-list 'ispell-skip-region-alist '("~" "~"))
+  (add-to-list 'ispell-skip-region-alist '("=" "="))
+  (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
+(add-hook 'org-mode-hook #'endless/org-ispell)
 
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
@@ -121,6 +129,42 @@
 (global-set-key (kbd "C-c C-r") 'python-shell-send-region)
 (global-set-key (kbd "C-t") 'transpose-chars)
 
+;; Builds C program
+(defun build-c-program ()
+  (interactive)
+  (defvar fn)
+  (setq fn (file-name-sans-extension (buffer-name)))
+  (defvar foo)
+  (setq foo (concat "g++ -o " fn " " (buffer-name)))
+  (save-buffer)
+  (shell-command foo)
+  (shell-command "echo Build successful!"))
+
+;; Builds and runs C program
+(defun execute-c-program ()
+  (interactive)
+  (defvar fn)
+  (setq fn (file-name-sans-extension (buffer-name)))
+  (defvar foo)
+  (setq foo (concat "g++ -o " fn " " (buffer-name)" && ./" fn ))
+  (save-buffer)
+  (shell-command foo))
+
+;; Removes compiled file
+(defun clean-c-program ()
+  (interactive)
+  (defvar fn)
+  (setq fn (file-name-sans-extension (buffer-name)))
+  (defvar foo)
+  (setq foo (concat "rm " fn))
+  (shell-command foo)
+  (shell-command "echo Clean successful!"))
+
+(require 'cc-mode)
+(define-key c++-mode-map (kbd "C-c C-b") 'build-c-program)
+(define-key c++-mode-map (kbd "C-c C-c") 'execute-c-program)
+(define-key c++-mode-map (kbd "C-c C-k") 'clean-c-program)
+
 (autoload 'octave-mode "octave-mod" "Loading octave-mode" t)
 (add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
 
@@ -144,7 +188,7 @@
 ;; (setenv "PATH"
 ;; 	(concat "/usr/texbin" ":"
 ;; (getenv "PATH")))
-(setq TeX-PDF-mode t)  ;; This was commented out before
+(setq TeX-PDF-mode t) 
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 (setq TeX-save-query nil) ;;autosave before compiling
@@ -251,7 +295,7 @@
 
 (setq echo-keystrokes 0.1)
 
-(setq visible-bell t)
+(setq visible-bell 1)
 
 (global-linum-mode t)
 (setq linum-format "%d ")
