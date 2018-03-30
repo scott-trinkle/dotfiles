@@ -135,7 +135,7 @@
   (defvar fn)
   (setq fn (file-name-sans-extension (buffer-name)))
   (defvar foo)
-  (setq foo (concat "g++ -o " fn " " (buffer-name)))
+  (setq foo (concat "gcc -o " fn " " (buffer-name)))
   (save-buffer)
   (shell-command foo)
   (shell-command "echo Build successful!"))
@@ -146,7 +146,7 @@
   (defvar fn)
   (setq fn (file-name-sans-extension (buffer-name)))
   (defvar foo)
-  (setq foo (concat "g++ -o " fn " " (buffer-name)" && ./" fn ))
+  (setq foo (concat "gcc -o " fn " " (buffer-name)" && ./" fn ))
   (save-buffer)
   (shell-command foo))
 
@@ -161,9 +161,18 @@
   (shell-command "echo Clean successful!"))
 
 (require 'cc-mode)
-(define-key c++-mode-map (kbd "C-c C-b") 'build-c-program)
+(define-key c++-mode-map (kbd "C-c C-b") 'build-c-program) 
 (define-key c++-mode-map (kbd "C-c C-c") 'execute-c-program)
 (define-key c++-mode-map (kbd "C-c C-k") 'clean-c-program)
+
+;; Flycheck
+(add-hook 'c++-mode-hook 'flycheck-mode)
+
+;; Accounts for C++11 updates
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11"))) 
+
+;; Use gcc instead of clang
+(setq-default flycheck-disabled-checkers '(c/c++-clang))
 
 (autoload 'octave-mode "octave-mod" "Loading octave-mode" t)
 (add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
