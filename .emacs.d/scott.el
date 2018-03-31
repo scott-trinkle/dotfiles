@@ -1,9 +1,18 @@
 (require 'package)
-(package-initialize)
-(add-to-list 'package-archives
-	     '("melpa" . "http://melpa.org/packages/")
-	     '("elpy" . "http://jorgenschaefer.github.io/packages/"))
 (setq package-enable-at-startup nil)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/")
+             '("elpy" . "http://jorgenschaefer.github.io/packages/"))
+(package-initialize)
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package))
+(require 'diminish)
+(require 'bind-key)
 
 (setq user-full-name "Scott Trinkle")
 (setq user-mail-address "tscott.trinkle@gmail.com")
@@ -14,70 +23,74 @@
 
 (setq org-directory "/Users/scotttrinkle/GoogleDrive/org/")
 
-  ;; Key bindings
-  (global-set-key (kbd "C-c l") 'org-store-link)
-  (global-set-key (kbd "C-c a") 'org-agenda)
-  (global-set-key (kbd "C-c c") 'org-capture)
-  (global-set-key (kbd "C-c b") 'org-iswitchb)
+;; Key bindings
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+(global-set-key (kbd "C-c b") 'org-iswitchb)
 
-  ;; TODO Keywords
-  (setq org-todo-keywords
-          '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w)" "|" "CANCELED(c)" "DONE(d)")))
+;; TODO Keywords
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w)" "|" "CANCELED(c)" "DONE(d)")))
 
-  (setq org-todo-keyword-faces
-        '(("TODO" . "pink")
-          ("NEXT" . "blue")
-          ("STARTED" . "yellow")
-          ("WAITING" . "orange")
-          ("CANCELED" . "red")
-          ("DONE" . "green")))
+(setq org-todo-keyword-faces
+      '(("TODO" . "pink")
+        ("NEXT" . "blue")
+        ("STARTED" . "yellow")
+        ("WAITING" . "orange")
+        ("CANCELED" . "red")
+        ("DONE" . "green")))
 
-  (defun org-summary-todo (n-done n-not-done)
-    "Switch entry to DONE when all subentries are done, to TODO otherwise."
-    (let (org-log-done org-log-states)  ; turn off logging
-      (org-todo (if (= n-not-done 0) "DONE" "TODO" ))))
-  (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+(defun org-summary-todo (n-done n-not-done)
+  "Switch entry to DONE when all subentries are done, to TODO otherwise."
+  (let (org-log-done org-log-states)  ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO" ))))
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
-  (setq org-enforce-todo-dependencies t)
-  (setq org-log-done 'time)
+(setq org-enforce-todo-dependencies t)
+(setq org-log-done 'time)
 
-  ;; Tags
-  (setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("someday" . ?s)))
-  (setq org-tags-column -85)
+;; Tags
+(setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("someday" . ?s)))
+(setq org-tags-column -85)
 
-  ;; Agenda
-  (setq org-default-notes-file "projects.org")
-  (setq org-agenda-files (quote ("~/GoogleDrive/org/" "~/GoogleDrive/org/projects.org" "~/GoogleDrive/org/calendar.org" "~/GoogleDrive/org/someday.org")))
-  (setq org-deadline-warning-days 5)          
-  (setq org-archive-location "archive/datetree.org::datetree/* Finished Tasks")
+;; Agenda
+(setq org-default-notes-file "projects.org")
+(setq org-agenda-files (quote ("~/GoogleDrive/org/" "~/GoogleDrive/org/projects.org" "~/GoogleDrive/org/calendar.org" "~/GoogleDrive/org/someday.org")))
+(setq org-deadline-warning-days 5)          
+(setq org-archive-location "archive/datetree.org::datetree/* Finished Tasks")
 
-  ;; Capture
-  (setq org-capture-templates 
-        (quote
-         (("t" "Todo [inbox]" entry (file+headline "~/GoogleDrive/org/projects.org" "Inbox")
-                                 "* %i%?"))))
+;; Capture
+(setq org-capture-templates 
+      (quote
+       (("t" "Todo [inbox]" entry (file+headline "~/GoogleDrive/org/projects.org" "Inbox")
+         "* %i%?"))))
 
-  ;; Refiling
-  (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
-  (setq org-refile-use-outline-path 'file)
-  (setq org-refile-allow-creating-parent-nodes 'confirm)
+;; Refiling
+(setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
+(setq org-refile-use-outline-path 'file)
+(setq org-refile-allow-creating-parent-nodes 'confirm)
 
 
-  (add-hook 'org-load-hook
-            (lambda ()
-              (define-key org-mode-map (kbd "C-c n") 'org-next-link)
-              (define-key org-mode-map (kbd "C-c p") 'org-previous-link)))
+(add-hook 'org-load-hook
+          (lambda ()
+            (define-key org-mode-map (kbd "C-c n") 'org-next-link)
+            (define-key org-mode-map (kbd "C-c p") 'org-previous-link)))
 
-  ;; Custom behavior
-  ;;(setq org-startup-truncated nil)  ;; wrap lines
-  (setq org-startup-indented t)
-  (setq org-agenda-restore-windows-after-quit t)  ;; save window views
-  (eval-after-load 'org  ;; shortcut for creating elisp src
-    '(progn
-       (add-to-list 'org-structure-template-alist
-                    '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
+;; Custom behavior
+;;(setq org-startup-truncated nil)  ;; wrap lines
+(setq org-startup-indented t)
+(setq org-agenda-restore-windows-after-quit t)  ;; save window views
+(eval-after-load 'org  ;; shortcut for creating elisp src
+  '(progn
+     (add-to-list 'org-structure-template-alist
+                  '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
+
+(setq org-src-fontify-natively t)
+(setq org-src-tab-acts-natively t)
+
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
-                  
+
 ;;Spellcheck
 (defun endless/org-ispell ()
   "Configure `ispell-skip-region-alist' for `org-mode'."
@@ -99,7 +112,7 @@
 
 ;; Open in current window
 (add-to-list 'display-buffer-alist
-     '("^\\*shell\\*$" . (display-buffer-same-window)))
+             '("^\\*shell\\*$" . (display-buffer-same-window)))
 
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
@@ -108,14 +121,7 @@
 
 (setq elpy-rpc-python-command "python3")
 (setq python-shell-interpreter "ipython"
-     python-shell-interpreter-args "--simple-prompt -i")
-
-;; Try this:
-;; (setq python-shell-interpreter "/usr/local/bin/python3")
-
-;; this fixes a bug where a readline warning launches
-;;whenever you send a script to the interpreter
-;(setq python-shell-completion-native-enable nil)
+      python-shell-interpreter-args "--simple-prompt -i")
 
 ;;changes syntax check from flymake to flycheck
 (when (require 'flycheck nil t)
@@ -135,7 +141,7 @@
   (defvar fn)
   (setq fn (file-name-sans-extension (buffer-name)))
   (defvar foo)
-  (setq foo (concat "gcc -o " fn " " (buffer-name)))
+  (setq foo (concat "gcc -std=c++11 -o " fn " " (buffer-name)))
   (save-buffer)
   (shell-command foo)
   (shell-command "echo Build successful!"))
@@ -146,7 +152,7 @@
   (defvar fn)
   (setq fn (file-name-sans-extension (buffer-name)))
   (defvar foo)
-  (setq foo (concat "gcc -o " fn " " (buffer-name)" && ./" fn ))
+  (setq foo (concat "gcc -std=c++11 -o " fn " " (buffer-name)" && ./" fn ))
   (save-buffer)
   (shell-command foo))
 
@@ -178,11 +184,11 @@
 (add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
 
 (add-hook 'octave-mode-hook
-	  (lambda ()
-	    (setq tab-width 4)
-	    (abbrev-mode 1)
-	    (auto-fill-mode 1)
-	    (if (eq window-system 'x)
+          (lambda ()
+            (setq tab-width 4)
+            (abbrev-mode 1)
+            (auto-fill-mode 1)
+            (if (eq window-system 'x)
                 (font-lock-mode 1))))
 
 (setq doc-view-resolution 300)
@@ -193,10 +199,6 @@
 (setq fci-rule-column 80)
 (setq fci-rule-use-dashes nil)
 
-;; (getenv "PATH")
-;; (setenv "PATH"
-;; 	(concat "/usr/texbin" ":"
-;; (getenv "PATH")))
 (setq TeX-PDF-mode t) 
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
@@ -216,6 +218,14 @@
 
 ;;Bibtex
 (setq bibtex-maintain-sorted-entries 't)
+
+;;Flycheck
+(add-hook 'LaTeX-mode-hook 'flycheck-mode)
+
+;; Fixes ghostscript issue that causes preview-latex to fail
+'(preview-gs-options
+  (quote
+   ("-q" "-dNOPAUSE" "-DNOPLATFONTS" "-dPrinted" "-dTextAlphaBits=4" "-dGraphicsAlphaBits=4")))
 
 (add-hook 'python-mode-hook 'fci-mode)
 (add-hook 'python-mode-hook 'linum-mode)
@@ -250,7 +260,7 @@
 ;;Backups
 (defvar --backup-directory (concat user-emacs-directory "backups"))
 (if (not (file-exists-p --backup-directory))
-        (make-directory --backup-directory t))
+    (make-directory --backup-directory t))
 (setq backup-directory-alist `(("." . ,--backup-directory)))
 (setq make-backup-files t               ; backup of a file the first time it is saved.
       backup-by-copying t               ; don't clobber symlinks
@@ -269,7 +279,7 @@
 (setq initial-scratch-message "")
 
 ;; Hide menu bars
-(menu-bar-mode -1)
+;;(menu-bar-mode -1)
 (toggle-scroll-bar -1)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
@@ -279,9 +289,9 @@
 
 (add-to-list 'default-frame-alist '(font . "Monaco 13"))
 (if (string-equal system-type "darwin")
-(set-fontset-font "fontset-default"
-'unicode
-'("Monaco" . "iso10646-1")))
+    (set-fontset-font "fontset-default"
+                      'unicode
+                      '("Monaco" . "iso10646-1")))
 
 (setq frame-resize-pixelwise 'true)
 (setq line-spacing 0)
@@ -314,11 +324,11 @@
   (xterm-mouse-mode 1)
   (global-set-key [mouse-1] '(mouse-set-point))
   (global-set-key [mouse-4] '(lambda ()
-			       (interactive)
-			       (scroll-down 1)))
+                               (interactive)
+                               (scroll-down 1)))
   (global-set-key [mouse-5] '(lambda ()
-			       (interactive)
-			       (scroll-up 1)))
+                               (interactive)
+                               (scroll-up 1)))
   (defun track-mouse (e))
   (setq mouse-sel-mode t)
   )
@@ -327,16 +337,16 @@
 (setq-default cursor-in-non-selected-windows nil)
 
 (defun transpose-windows (arg)
-   "Transpose the buffers shown in two windows."
-   (interactive "p")
-   (let ((selector (if (>= arg 0) 'next-window 'previous-window)))
-     (while (/= arg 0)
-       (let ((this-win (window-buffer))
-             (next-win (window-buffer (funcall selector))))
-         (set-window-buffer (selected-window) next-win)
-         (set-window-buffer (funcall selector) this-win)
-         (select-window (funcall selector)))
-       (setq arg (if (plusp arg) (1- arg) (1+ arg))))))
+  "Transpose the buffers shown in two windows."
+  (interactive "p")
+  (let ((selector (if (>= arg 0) 'next-window 'previous-window)))
+    (while (/= arg 0)
+      (let ((this-win (window-buffer))
+            (next-win (window-buffer (funcall selector))))
+        (set-window-buffer (selected-window) next-win)
+        (set-window-buffer (funcall selector) this-win)
+        (select-window (funcall selector)))
+      (setq arg (if (plusp arg) (1- arg) (1+ arg))))))
 (global-set-key (kbd "C-x 7") 'transpose-windows)
 
 (global-set-key (kbd "C-x l") 'previous-buffer)
@@ -445,7 +455,6 @@ i.e. change right window to bottom, or change bottom window to right."
 
 (global-set-key (kbd "C-x C-r") 'query-replace)
 
-;;(global-set-key (kbd "C-c C-f") 'toggle-frame-fullscreen)
 (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
 
 (setq custom-file "~/.emacs.d/custom.el")

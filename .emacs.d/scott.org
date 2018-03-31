@@ -20,17 +20,17 @@
 #+END_SRC
 ** Personal information
 #+BEGIN_SRC emacs-lisp :tangle yes
-(setq user-full-name "Scott Trinkle")
-(setq user-mail-address "tscott.trinkle@gmail.com")
-(setq calendar-location-name "Chicago, Il")
+  (setq user-full-name "Scott Trinkle")
+  (setq user-mail-address "tscott.trinkle@gmail.com")
+  (setq calendar-location-name "Chicago, Il")
 #+END_SRC
 * Modes
 ** Abbrev
  Sort of like a custom autocorrect. Not currently implemented, but
  borrowing this from Talon's in case I'm ever interested. 
  #+BEGIN_SRC emacs-lisp :tangle yes 
- (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
- (setq save-abbrevs t)
+   (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
+   (setq save-abbrevs t)
  #+END_SRC
 ** Org-mode
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -45,7 +45,7 @@
 
   ;; TODO Keywords
   (setq org-todo-keywords
-          '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w)" "|" "CANCELED(c)" "DONE(d)")))
+        '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w)" "|" "CANCELED(c)" "DONE(d)")))
 
   (setq org-todo-keyword-faces
         '(("TODO" . "pink")
@@ -78,7 +78,7 @@
   (setq org-capture-templates 
         (quote
          (("t" "Todo [inbox]" entry (file+headline "~/GoogleDrive/org/projects.org" "Inbox")
-                                 "* %i%?"))))
+           "* %i%?"))))
 
   ;; Refiling
   (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
@@ -99,35 +99,37 @@
     '(progn
        (add-to-list 'org-structure-template-alist
                     '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
-(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
-   (setq org-src-fontify-natively t)
-   (setq org-src-tab-acts-natively t)
-                  
-;;Spellcheck
-(defun endless/org-ispell ()
-  "Configure `ispell-skip-region-alist' for `org-mode'."
-  (make-local-variable 'ispell-skip-region-alist)
-  (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
-  (add-to-list 'ispell-skip-region-alist '("~" "~"))
-  (add-to-list 'ispell-skip-region-alist '("=" "="))
-  (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
-(add-hook 'org-mode-hook #'endless/org-ispell)
+
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+
+  ;;Spellcheck
+  (defun endless/org-ispell ()
+    "Configure `ispell-skip-region-alist' for `org-mode'."
+    (make-local-variable 'ispell-skip-region-alist)
+    (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+    (add-to-list 'ispell-skip-region-alist '("~" "~"))
+    (add-to-list 'ispell-skip-region-alist '("=" "="))
+    (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
+  (add-hook 'org-mode-hook #'endless/org-ispell)
 
 #+END_SRC
 ** Shell
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-(add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
-(setenv "PATH" (shell-command-to-string "source ~/.bash_profile; echo -n $PATH"))
+  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+  (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
+  (setenv "PATH" (shell-command-to-string "source ~/.bash_profile; echo -n $PATH"))
 
-;; I think this makes it load .bash_profile. Login vs. interactive shell?
-(setq shell-command-switch "-lc") 
+  ;; I think this makes it load .bash_profile. Login vs. interactive shell?
+  (setq shell-command-switch "-lc") 
 
-(global-set-key (kbd "C-x C-p") 'shell)
+  (global-set-key (kbd "C-x C-p") 'shell)
 
-;; Open in current window
-(add-to-list 'display-buffer-alist
-     '("^\\*shell\\*$" . (display-buffer-same-window)))
+  ;; Open in current window
+  (add-to-list 'display-buffer-alist
+               '("^\\*shell\\*$" . (display-buffer-same-window)))
 #+END_SRC
 ** Magit
 #+BEGIN_SRC emacs-lisp :tangle yes 
@@ -140,14 +142,7 @@
 
   (setq elpy-rpc-python-command "python3")
   (setq python-shell-interpreter "ipython"
-       python-shell-interpreter-args "--simple-prompt -i")
-
-  ;; Try this:
-  ;; (setq python-shell-interpreter "/usr/local/bin/python3")
-
-  ;; this fixes a bug where a readline warning launches
-  ;;whenever you send a script to the interpreter
-  ;(setq python-shell-completion-native-enable nil)
+        python-shell-interpreter-args "--simple-prompt -i")
 
   ;;changes syntax check from flymake to flycheck
   (when (require 'flycheck nil t)
@@ -164,83 +159,79 @@
 ** Cpp
 #+BEGIN_SRC emacs-lisp :tangle yes 
 
-;; Builds C program
-(defun build-c-program ()
-  (interactive)
-  (defvar fn)
-  (setq fn (file-name-sans-extension (buffer-name)))
-  (defvar foo)
-  (setq foo (concat "gcc -std=c++11 -o " fn " " (buffer-name)))
-  (save-buffer)
-  (shell-command foo)
-  (shell-command "echo Build successful!"))
+  ;; Builds C program
+  (defun build-c-program ()
+    (interactive)
+    (defvar fn)
+    (setq fn (file-name-sans-extension (buffer-name)))
+    (defvar foo)
+    (setq foo (concat "gcc -std=c++11 -o " fn " " (buffer-name)))
+    (save-buffer)
+    (shell-command foo)
+    (shell-command "echo Build successful!"))
 
-;; Builds and runs C program
-(defun execute-c-program ()
-  (interactive)
-  (defvar fn)
-  (setq fn (file-name-sans-extension (buffer-name)))
-  (defvar foo)
-  (setq foo (concat "gcc -std=c++11 -o " fn " " (buffer-name)" && ./" fn ))
-  (save-buffer)
-  (shell-command foo))
+  ;; Builds and runs C program
+  (defun execute-c-program ()
+    (interactive)
+    (defvar fn)
+    (setq fn (file-name-sans-extension (buffer-name)))
+    (defvar foo)
+    (setq foo (concat "gcc -std=c++11 -o " fn " " (buffer-name)" && ./" fn ))
+    (save-buffer)
+    (shell-command foo))
 
-;; Removes compiled file
-(defun clean-c-program ()
-  (interactive)
-  (defvar fn)
-  (setq fn (file-name-sans-extension (buffer-name)))
-  (defvar foo)
-  (setq foo (concat "rm " fn))
-  (shell-command foo)
-  (shell-command "echo Clean successful!"))
+  ;; Removes compiled file
+  (defun clean-c-program ()
+    (interactive)
+    (defvar fn)
+    (setq fn (file-name-sans-extension (buffer-name)))
+    (defvar foo)
+    (setq foo (concat "rm " fn))
+    (shell-command foo)
+    (shell-command "echo Clean successful!"))
 
-(require 'cc-mode)
-(define-key c++-mode-map (kbd "C-c C-b") 'build-c-program) 
-(define-key c++-mode-map (kbd "C-c C-c") 'execute-c-program)
-(define-key c++-mode-map (kbd "C-c C-k") 'clean-c-program)
+  (require 'cc-mode)
+  (define-key c++-mode-map (kbd "C-c C-b") 'build-c-program) 
+  (define-key c++-mode-map (kbd "C-c C-c") 'execute-c-program)
+  (define-key c++-mode-map (kbd "C-c C-k") 'clean-c-program)
 
-;; Flycheck
-(add-hook 'c++-mode-hook 'flycheck-mode)
+  ;; Flycheck
+  (add-hook 'c++-mode-hook 'flycheck-mode)
 
-;; Accounts for C++11 updates
-(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11"))) 
+  ;; Accounts for C++11 updates
+  (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11"))) 
 
-;; Use gcc instead of clang
-(setq-default flycheck-disabled-checkers '(c/c++-clang))
+  ;; Use gcc instead of clang
+  (setq-default flycheck-disabled-checkers '(c/c++-clang))
 
 #+END_SRC
 ** Octave
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(autoload 'octave-mode "octave-mod" "Loading octave-mode" t)
-(add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
+  (autoload 'octave-mode "octave-mod" "Loading octave-mode" t)
+  (add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
 
-(add-hook 'octave-mode-hook
-	  (lambda ()
-	    (setq tab-width 4)
-	    (abbrev-mode 1)
-	    (auto-fill-mode 1)
-	    (if (eq window-system 'x)
-                (font-lock-mode 1))))
+  (add-hook 'octave-mode-hook
+            (lambda ()
+              (setq tab-width 4)
+              (abbrev-mode 1)
+              (auto-fill-mode 1)
+              (if (eq window-system 'x)
+                  (font-lock-mode 1))))
 #+END_SRC
 ** Docview
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(setq doc-view-resolution 300)
+  (setq doc-view-resolution 300)
 #+END_SRC
 ** Fill column indicator
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(require 'fill-column-indicator)
-(setq fci-rule-color "white")
-(setq-default fill-column 80)
-(setq fci-rule-column 80)
-(setq fci-rule-use-dashes nil)
+  (require 'fill-column-indicator)
+  (setq fci-rule-color "white")
+  (setq-default fill-column 80)
+  (setq fci-rule-column 80)
+  (setq fci-rule-use-dashes nil)
 #+END_SRC
 ** LaTeX and AUCTeX
 #+BEGIN_SRC emacs-lisp :tangle yes 
-  ;; (getenv "PATH")
-  ;; (setenv "PATH"
-  ;; 	(concat "/usr/texbin" ":"
-  ;; (getenv "PATH")))
   (setq TeX-PDF-mode t) 
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
@@ -255,322 +246,317 @@
   ;; Scale preview size
   (set-default 'preview-scale-function 1.0)
 
-
-  (add-hook 'LaTeX-mode-hook 'flycheck-mode)
-
-  ;; Fixes ghostscript issue that causes preview-latex to fail
-  '(preview-gs-options
-  (quote
-  ("-q" "-dNOPAUSE" "-DNOPLATFONTS" "-dPrinted" "-dTextAlphaBits=4" "-dGraphicsAlphaBits=4")))
-
   ;; Don't ask to cache preamble
   (setq preview-auto-cache-preamble t)
 
   ;;Bibtex
   (setq bibtex-maintain-sorted-entries 't)
 
+  ;;Flycheck
+  (add-hook 'LaTeX-mode-hook 'flycheck-mode)
+
+  ;; Fixes ghostscript issue that causes preview-latex to fail
+  '(preview-gs-options
+    (quote
+     ("-q" "-dNOPAUSE" "-DNOPLATFONTS" "-dPrinted" "-dTextAlphaBits=4" "-dGraphicsAlphaBits=4")))
 #+END_SRC
 ** Minor Mode Hooks
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(add-hook 'python-mode-hook 'fci-mode)
-(add-hook 'python-mode-hook 'linum-mode)
+  (add-hook 'python-mode-hook 'fci-mode)
+  (add-hook 'python-mode-hook 'linum-mode)
 
-(add-hook 'LaTeX-mode-hook 'flyspell-mode)
-(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-(setq reftex-plug-into-AUCTeX t)
+  (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+  (setq reftex-plug-into-AUCTeX t)
 
-(add-hook 'lisp-mode-hook 'linum-mode)
+  (add-hook 'lisp-mode-hook 'linum-mode)
 
-(add-hook 'org-mode-hook 'org-indent-mode)
-(add-hook 'org-mode-hook (lambda () (diminish 'org-indent-mode "")))
-(add-hook 'org-mode-hook 'org-beamer-mode)
-(add-hook 'org-mode-hook (lambda () (diminish 'org-beamer-mode "")))
-(add-hook 'math-mode 'linum-mode)
-
+  (add-hook 'org-mode-hook 'org-indent-mode)
+  (add-hook 'org-mode-hook (lambda () (diminish 'org-indent-mode "")))
+  (add-hook 'org-mode-hook 'org-beamer-mode)
+  (add-hook 'org-mode-hook (lambda () (diminish 'org-beamer-mode "")))
+  (add-hook 'math-mode 'linum-mode)
 #+END_SRC
 ** Ido
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(require 'ido)
-(ido-mode 1)
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(setq ido-use-filename-at-point 'guess)
-(setq ido-file-extensions-order '(".txt" ".py" ".org"))
-(setq ido-max-window-height 1)
+  (require 'ido)
+  (ido-mode 1)
+  (setq ido-enable-flex-matching t)
+  (setq ido-everywhere t)
+  (setq ido-use-filename-at-point 'guess)
+  (setq ido-file-extensions-order '(".txt" ".py" ".org"))
+  (setq ido-max-window-height 1)
 #+END_SRC
 ** Misc (autocomplete/html)
 #+BEGIN_SRC emacs-lisp :tangle yes 
-;;Use autocomplete
-(global-auto-complete-mode t)
+  ;;Use autocomplete
+  (global-auto-complete-mode t)
 
-;;Read HTML
-(setq mm-text-html-renderer 'w3m)
-(setq org-return-follows-link 't)
+  ;;Read HTML
+  (setq mm-text-html-renderer 'w3m)
+  (setq org-return-follows-link 't)
 #+END_SRC
 * Backups
 #+BEGIN_SRC emacs-lisp :tangle yes 
-;;Backups
-(defvar --backup-directory (concat user-emacs-directory "backups"))
-(if (not (file-exists-p --backup-directory))
-        (make-directory --backup-directory t))
-(setq backup-directory-alist `(("." . ,--backup-directory)))
-(setq make-backup-files t               ; backup of a file the first time it is saved.
-      backup-by-copying t               ; don't clobber symlinks
-      version-control t                 ; version numbers for backup files
-      delete-old-versions t             ; delete excess backup files silently
-      delete-by-moving-to-trash t
-      kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
-      kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
-      auto-save-default t               ; auto-save every buffer that visits a file
-      auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
-      auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
-      )
+  ;;Backups
+  (defvar --backup-directory (concat user-emacs-directory "backups"))
+  (if (not (file-exists-p --backup-directory))
+      (make-directory --backup-directory t))
+  (setq backup-directory-alist `(("." . ,--backup-directory)))
+  (setq make-backup-files t               ; backup of a file the first time it is saved.
+        backup-by-copying t               ; don't clobber symlinks
+        version-control t                 ; version numbers for backup files
+        delete-old-versions t             ; delete excess backup files silently
+        delete-by-moving-to-trash t
+        kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+        kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+        auto-save-default t               ; auto-save every buffer that visits a file
+        auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+        auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+        )
 #+END_SRC
 * Appearance
 ** Window
-;;WINDOW
 #+BEGIN_SRC emacs-lisp :tangle yes 
-;; Skip splash screen
-(setq inhibit-startup-message t)
-(setq initial-scratch-message "")
+  ;; Skip splash screen
+  (setq inhibit-startup-message t)
+  (setq initial-scratch-message "")
 
-;; Hide menu bars
-(menu-bar-mode -1)
-(toggle-scroll-bar -1)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
+  ;; Hide menu bars
+  ;;(menu-bar-mode -1)
+  (toggle-scroll-bar -1)
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
 
-;; Display settings
-(setq mac-allow-anti-aliasing t)
+  ;; Display settings
+  (setq mac-allow-anti-aliasing t)
 #+END_SRC
 ** Font
 #+BEGIN_SRC emacs-lisp :tangle yes 
+  (add-to-list 'default-frame-alist '(font . "Monaco 13"))
+  (if (string-equal system-type "darwin")
+      (set-fontset-font "fontset-default"
+                        'unicode
+                        '("Monaco" . "iso10646-1")))
 
-(add-to-list 'default-frame-alist '(font . "Monaco 13"))
-(if (string-equal system-type "darwin")
-(set-fontset-font "fontset-default"
-'unicode
-'("Monaco" . "iso10646-1")))
-
-(setq frame-resize-pixelwise 'true)
-(setq line-spacing 0)
+  (setq frame-resize-pixelwise 'true)
+  (setq line-spacing 0)
 #+END_SRC
 ** Color
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(load-file "~/.emacs.d/xterm-color/xterm-color.el")
-(require 'xterm-color)
-(progn (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter)
-       (setq comint-output-filter-functions (remove 'ansi-color-process-output comint-output-filter-functions)))
+  (load-file "~/.emacs.d/xterm-color/xterm-color.el")
+  (require 'xterm-color)
+  (progn (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter)
+         (setq comint-output-filter-functions (remove 'ansi-color-process-output comint-output-filter-functions)))
 #+END_SRC
 * Custom behaviors 
 ** Display help in current window
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(add-to-list 'display-buffer-alist
-             '("*Help*" display-buffer-same-window))
+  (add-to-list 'display-buffer-alist
+               '("*Help*" display-buffer-same-window))
 #+END_SRC
 ** Intuitive text marking
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(delete-selection-mode t) ;; Deletes selection when you start typing
-(transient-mark-mode t)
-(setq x-select-enable-clipboard t)
+  (delete-selection-mode t) ;; Deletes selection when you start typing
+  (transient-mark-mode t)
+  (setq x-select-enable-clipboard t)
 #+END_SRC
 ** Simplify yes-no
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(defalias 'yes-or-no-p 'y-or-n-p)
+  (defalias 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 ** Bell off
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(setq ring-bell-function 'ignore)
+  (setq ring-bell-function 'ignore)
 #+END_SRC
 ** Fast key response
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(setq echo-keystrokes 0.1)
+  (setq echo-keystrokes 0.1)
 #+END_SRC
 ** Visible bell
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(setq visible-bell 1)
+  (setq visible-bell 1)
 #+END_SRC
 ** Show line number
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(global-linum-mode t)
-(setq linum-format "%d ")
+  (global-linum-mode t)
+  (setq linum-format "%d ")
 #+END_SRC
 ** Mouse on
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(unless window-system
-  (require 'mouse)
-  (xterm-mouse-mode 1)
-  (global-set-key [mouse-1] '(mouse-set-point))
-  (global-set-key [mouse-4] '(lambda ()
-			       (interactive)
-			       (scroll-down 1)))
-  (global-set-key [mouse-5] '(lambda ()
-			       (interactive)
-			       (scroll-up 1)))
-  (defun track-mouse (e))
-  (setq mouse-sel-mode t)
-  )
+  (unless window-system
+    (require 'mouse)
+    (xterm-mouse-mode 1)
+    (global-set-key [mouse-1] '(mouse-set-point))
+    (global-set-key [mouse-4] '(lambda ()
+                                 (interactive)
+                                 (scroll-down 1)))
+    (global-set-key [mouse-5] '(lambda ()
+                                 (interactive)
+                                 (scroll-up 1)))
+    (defun track-mouse (e))
+    (setq mouse-sel-mode t)
+    )
 #+END_SRC
 ** Cursor settings
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(blink-cursor-mode 0)
-(setq-default cursor-in-non-selected-windows nil)
+  (blink-cursor-mode 0)
+  (setq-default cursor-in-non-selected-windows nil)
 #+END_SRC
 ** Transpose windows
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(defun transpose-windows (arg)
-   "Transpose the buffers shown in two windows."
-   (interactive "p")
-   (let ((selector (if (>= arg 0) 'next-window 'previous-window)))
-     (while (/= arg 0)
-       (let ((this-win (window-buffer))
-             (next-win (window-buffer (funcall selector))))
-         (set-window-buffer (selected-window) next-win)
-         (set-window-buffer (funcall selector) this-win)
-         (select-window (funcall selector)))
-       (setq arg (if (plusp arg) (1- arg) (1+ arg))))))
-(global-set-key (kbd "C-x 7") 'transpose-windows)
+  (defun transpose-windows (arg)
+    "Transpose the buffers shown in two windows."
+    (interactive "p")
+    (let ((selector (if (>= arg 0) 'next-window 'previous-window)))
+      (while (/= arg 0)
+        (let ((this-win (window-buffer))
+              (next-win (window-buffer (funcall selector))))
+          (set-window-buffer (selected-window) next-win)
+          (set-window-buffer (funcall selector) this-win)
+          (select-window (funcall selector)))
+        (setq arg (if (plusp arg) (1- arg) (1+ arg))))))
+  (global-set-key (kbd "C-x 7") 'transpose-windows)
 #+END_SRC
 ** Next/previous buffer
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(global-set-key (kbd "C-x l") 'previous-buffer)
-(global-set-key (kbd "C-x ;") 'next-buffer)
+  (global-set-key (kbd "C-x l") 'previous-buffer)
+  (global-set-key (kbd "C-x ;") 'next-buffer)
 #+END_SRC
 ** Next/previous window
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(global-set-key (kbd "C-x <up>") 'windmove-up)
-(global-set-key (kbd "C-x <down>") 'windmove-down)
-(global-set-key (kbd "C-x <right>") 'windmove-right)
-(global-set-key (kbd "C-x <left>") 'windmove-left)
+  (global-set-key (kbd "C-x <up>") 'windmove-up)
+  (global-set-key (kbd "C-x <down>") 'windmove-down)
+  (global-set-key (kbd "C-x <right>") 'windmove-right)
+  (global-set-key (kbd "C-x <left>") 'windmove-left)
 #+END_SRC
 ** Skippable buffers
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(setq skippable-buffers '("*Messages*" "*scratch*" "*Help*" "*Completions*" "Calendar" "*info*" "*Ibuffer*"))
+  (setq skippable-buffers '("*Messages*" "*scratch*" "*Help*" "*Completions*" "Calendar" "*info*" "*Ibuffer*"))
 
-(defun my-next-buffer ()
-  "next-buffer that skips certain buffers"
-  (interactive)
-  (next-buffer)
-  (while (member (buffer-name) skippable-buffers)
-    (next-buffer)))
+  (defun my-next-buffer ()
+    "next-buffer that skips certain buffers"
+    (interactive)
+    (next-buffer)
+    (while (member (buffer-name) skippable-buffers)
+      (next-buffer)))
 
-(defun my-previous-buffer ()
-  "previous-buffer that skips certain buffers"
-  (interactive)
-  (previous-buffer)
-  (while (member (buffer-name) skippable-buffers)
-    (previous-buffer)))
+  (defun my-previous-buffer ()
+    "previous-buffer that skips certain buffers"
+    (interactive)
+    (previous-buffer)
+    (while (member (buffer-name) skippable-buffers)
+      (previous-buffer)))
 
-(global-set-key [remap next-buffer] 'my-next-buffer)
-(global-set-key [remap previous-buffer] 'my-previous-buffer)
+  (global-set-key [remap next-buffer] 'my-next-buffer)
+  (global-set-key [remap previous-buffer] 'my-previous-buffer)
 #+END_SRC
 ** Switch to new window
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(defun new-window-below-and-switch ()
-  (interactive)
-  (split-window-below)
-  (other-window 1))
+  (defun new-window-below-and-switch ()
+    (interactive)
+    (split-window-below)
+    (other-window 1))
 
-(defun new-window-right-and-switch ()
-  (interactive)
-  (split-window-right)
-  (other-window 1))
+  (defun new-window-right-and-switch ()
+    (interactive)
+    (split-window-right)
+    (other-window 1))
 
-(global-set-key (kbd "C-x 2") 'new-window-below-and-switch)
-(global-set-key (kbd "C-x 3") 'new-window-right-and-switch)
+  (global-set-key (kbd "C-x 2") 'new-window-below-and-switch)
+  (global-set-key (kbd "C-x 3") 'new-window-right-and-switch)
 #+END_SRC
 ** Flip window orientation
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(defun window-toggle-split-direction ()
-  "Switch window split from horizontally to vertically, or vice versa.
+  (defun window-toggle-split-direction ()
+    "Switch window split from horizontally to vertically, or vice versa.
 
-i.e. change right window to bottom, or change bottom window to right."
-  (interactive)
-  (require 'windmove)
-  (let ((done))
-    (dolist (dirs '((right . down) (down . right)))
-      (unless done
-        (let* ((win (selected-window))
-               (nextdir (car dirs))
-               (neighbour-dir (cdr dirs))
-               (next-win (windmove-find-other-window nextdir win))
-               (neighbour1 (windmove-find-other-window neighbour-dir win))
-               (neighbour2 (if next-win (with-selected-window next-win
-                                          (windmove-find-other-window neighbour-dir next-win)))))
-          ;;(message "win: %s\nnext-win: %s\nneighbour1: %s\nneighbour2:%s" win next-win neighbour1 neighbour2)
-          (setq done (and (eq neighbour1 neighbour2)
-                          (not (eq (minibuffer-window) next-win))))
-          (if done
-              (let* ((other-buf (window-buffer next-win)))
-                (delete-window next-win)
-                (if (eq nextdir 'right)
-                    (split-window-vertically)
-                  (split-window-horizontally))
-                (set-window-buffer (windmove-find-other-window neighbour-dir) other-buf))))))))
+  i.e. change right window to bottom, or change bottom window to right."
+    (interactive)
+    (require 'windmove)
+    (let ((done))
+      (dolist (dirs '((right . down) (down . right)))
+        (unless done
+          (let* ((win (selected-window))
+                 (nextdir (car dirs))
+                 (neighbour-dir (cdr dirs))
+                 (next-win (windmove-find-other-window nextdir win))
+                 (neighbour1 (windmove-find-other-window neighbour-dir win))
+                 (neighbour2 (if next-win (with-selected-window next-win
+                                            (windmove-find-other-window neighbour-dir next-win)))))
+            ;;(message "win: %s\nnext-win: %s\nneighbour1: %s\nneighbour2:%s" win next-win neighbour1 neighbour2)
+            (setq done (and (eq neighbour1 neighbour2)
+                            (not (eq (minibuffer-window) next-win))))
+            (if done
+                (let* ((other-buf (window-buffer next-win)))
+                  (delete-window next-win)
+                  (if (eq nextdir 'right)
+                      (split-window-vertically)
+                    (split-window-horizontally))
+                  (set-window-buffer (windmove-find-other-window neighbour-dir) other-buf))))))))
 
-(global-set-key (kbd "C-x 8") 'window-toggle-split-direction)
+  (global-set-key (kbd "C-x 8") 'window-toggle-split-direction)
 #+END_SRC
 ** Comments
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(global-set-key (kbd "M-c") 'comment-region)
-(global-set-key (kbd "M-u") 'uncomment-region)
+  (global-set-key (kbd "M-c") 'comment-region)
+  (global-set-key (kbd "M-u") 'uncomment-region)
 #+END_SRC
 ** Killing emacs
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(require 'cl-lib)
-(defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
-  "Prevent annoying \"Active processes exist\" query when you quit Emacs."
-  (cl-letf (((symbol-function #'process-list) (lambda ())))
-    ad-do-it))
+  (require 'cl-lib)
+  (defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
+    "Prevent annoying \"Active processes exist\" query when you quit Emacs."
+    (cl-letf (((symbol-function #'process-list) (lambda ())))
+      ad-do-it))
 
-;;Toggle off "kill running processes?" flag
-(defun my-kill-emacs ()
-  "Save some buffers, then exit unconditionally"
-  (interactive)
-  (save-some-buffers nil t)
-  (kill-emacs))
-(global-set-key (kbd "C-x C-c") 'my-kill-emacs)
+  ;;Toggle off "kill running processes?" flag
+  (defun my-kill-emacs ()
+    "Save some buffers, then exit unconditionally"
+    (interactive)
+    (save-some-buffers nil t)
+    (kill-emacs))
+  (global-set-key (kbd "C-x C-c") 'my-kill-emacs)
 #+END_SRC
 ** Cut and paste
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(defun pbcopy ()
-  (interactive)
-  (call-process-region (point) (mark) "pbcopy")
-  (setq deactivate-mark t))
+  (defun pbcopy ()
+    (interactive)
+    (call-process-region (point) (mark) "pbcopy")
+    (setq deactivate-mark t))
 
-(defun pbpaste ()
-  (interactive)
-  (call-process-region (point) (if mark-active (mark) (point)) "pbpaste" t t))
+  (defun pbpaste ()
+    (interactive)
+    (call-process-region (point) (if mark-active (mark) (point)) "pbpaste" t t))
 
-(defun pbcut ()
-  (interactive)
-  (pbcopy)
-  (delete-region (region-beginning) (region-end)))
+  (defun pbcut ()
+    (interactive)
+    (pbcopy)
+    (delete-region (region-beginning) (region-end)))
 
-;;(global-set-key (kbd "C-c C-c") 'pbcopy)
-(global-set-key (kbd "C-c C-v") 'pbpaste)
-(global-set-key (kbd "C-c C-x") 'pbcut)
+  ;;(global-set-key (kbd "C-c C-c") 'pbcopy)
+  (global-set-key (kbd "C-c C-v") 'pbpaste)
+  (global-set-key (kbd "C-c C-x") 'pbcut)
 #+END_SRC
 ** Search and replace
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(global-set-key (kbd "C-x C-r") 'query-replace)
+  (global-set-key (kbd "C-x C-r") 'query-replace)
 #+END_SRC
 ** Fullscreen
 #+BEGIN_SRC emacs-lisp :tangle yes 
-;;(global-set-key (kbd "C-c C-f") 'toggle-frame-fullscreen)
-(global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
+  (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
 #+END_SRC
 ** Custom commands
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file 'noerror)
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file 'noerror)
 #+END_SRC
 * Layout windows
 #+BEGIN_SRC emacs-lisp :tangle yes 
-(when window-system (set-frame-size (selected-frame) 180 48))
-(find-file "~/GoogleDrive/org/projects.org")
-(find-file "~/.emacs.d/scott.org")
-(shell "*shell*")
-(add-hook 'after-init-hook (lambda () (org-agenda nil "n")))
-(switch-to-buffer "*Org Agenda*")
+  (when window-system (set-frame-size (selected-frame) 180 48))
+  (find-file "~/GoogleDrive/org/projects.org")
+  (find-file "~/.emacs.d/scott.org")
+  (shell "*shell*")
+  (add-hook 'after-init-hook (lambda () (org-agenda nil "n")))
+  (switch-to-buffer "*Org Agenda*")
 #+END_SRC
