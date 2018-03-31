@@ -1,12 +1,22 @@
 * Startup
 ** Package initialize
 #+BEGIN_SRC emacs-lisp :tangle yes
-(require 'package)
-(package-initialize)
-(add-to-list 'package-archives
-	     '("melpa" . "http://melpa.org/packages/")
-	     '("elpy" . "http://jorgenschaefer.github.io/packages/"))
-(setq package-enable-at-startup nil)
+  (require 'package)
+  (setq package-enable-at-startup nil)
+  (add-to-list 'package-archives
+               '("melpa" . "http://melpa.org/packages/")
+               '("elpy" . "http://jorgenschaefer.github.io/packages/"))
+  (package-initialize)
+
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+
+  (eval-when-compile
+    (require 'use-package))
+  (require 'diminish)
+  (require 'bind-key)
+
 #+END_SRC
 ** Personal information
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -90,6 +100,8 @@
        (add-to-list 'org-structure-template-alist
                     '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+   (setq org-src-fontify-natively t)
+   (setq org-src-tab-acts-natively t)
                   
 ;;Spellcheck
 (defun endless/org-ispell ()
@@ -242,6 +254,14 @@
 
   ;; Scale preview size
   (set-default 'preview-scale-function 1.0)
+
+
+  (add-hook 'LaTeX-mode-hook 'flycheck-mode)
+
+  ;; Fixes ghostscript issue that causes preview-latex to fail
+  '(preview-gs-options
+  (quote
+  ("-q" "-dNOPAUSE" "-DNOPLATFONTS" "-dPrinted" "-dTextAlphaBits=4" "-dGraphicsAlphaBits=4")))
 
   ;; Don't ask to cache preamble
   (setq preview-auto-cache-preamble t)
