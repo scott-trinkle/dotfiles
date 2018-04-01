@@ -169,7 +169,7 @@
     (defvar fn)
     (setq fn (file-name-sans-extension (buffer-name)))
     (defvar foo)
-    (setq foo (concat "gcc -std=c++11 -o " fn " " (buffer-name)))
+    (setq foo (concat "c++ -std=c++11 -o " fn " " (buffer-name)))
     (save-buffer)
     (shell-command foo)
     (shell-command "echo Build successful!"))
@@ -180,7 +180,7 @@
     (defvar fn)
     (setq fn (file-name-sans-extension (buffer-name)))
     (defvar foo)
-    (setq foo (concat "gcc -std=c++11 -o " fn " " (buffer-name)" && ./" fn ))
+    (setq foo (concat "c++ -std=c++11 -o " fn " " (buffer-name)" && ./" fn ))
     (save-buffer)
     (shell-command foo))
 
@@ -199,14 +199,63 @@
   (define-key c++-mode-map (kbd "C-c C-c") 'execute-c-program)
   (define-key c++-mode-map (kbd "C-c C-k") 'clean-c-program)
 
+  (defun my-irony-mode-hook ()
+    (define-key irony-mode-map [remap completion-at-point]
+      'irony-completion-at-point-async)
+    (define-key irony-mode-map [remap complete-symbol]
+      'irony-completion-at-point-async))
+  (defun irony--check-expansion ()
+    (save-excursion
+      (if (looking-at "\\_>") t
+        (backward-char 1)
+        (if (looking-at "\\.") t
+          (backward-char 1)
+          (if (looking-at "->") t nil)))))
+  (defun irony--indent-or-complete ()
+    "Indent or Complete"
+    (interactive)
+    (cond ((and (not (use-region-p))
+                (irony--check-expansion))
+           (message "complete")
+           (company-complete-common))
+          (t
+           (message "indent")
+           (call-interactively 'c-indent-line-or-region))))
+  (defun irony-mode-keys ()
+    "Modify keymaps used by `irony-mode'."
+    (local-set-key (kbd "TAB") 'irony--indent-or-complete)
+    (local-set-key [tab] 'irony--indent-or-complete))
+
+  (use-package irony
+    :ensure t
+    :config
+    (progn
+      (use-package company-irony
+        :ensure t
+        :config
+        (add-to-list 'company-backends 'company-irony)))
+
+    (add-hook 'c++-mode-hook 'irony-mode)
+    (add-hook 'c-mode-hook 'irony-mode)
+    (add-hook 'c++-mode-hook 'company-mode)
+    (add-hook 'c-mode-hook 'company-mode)
+    (add-hook 'irony-mode-hook 'electric-pair-mode)
+    (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+    (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+    (add-hook 'irony-mode-hook 'irony-eldoc)
+    (add-hook 'c-mode-common-hook 'irony-mode-keys))
+
+
   ;; Flycheck
   (add-hook 'c++-mode-hook 'flycheck-mode)
+  (add-hook 'c-mode-hook 'flycheck-mode)
+  (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++11"))) ;; Accounts for C++11 updates
+  (eval-after-load 'flycheck
+    '(add-hook 'flycheck-mod-hook #'flycheck-irony-setup))
 
-  ;; Accounts for C++11 updates
-  (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11"))) 
 
-  ;; Use gcc instead of clang
-  (setq-default flycheck-disabled-checkers '(c/c++-clang))
+
 
 #+END_SRC
 ** Octave
