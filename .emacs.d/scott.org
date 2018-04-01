@@ -144,7 +144,8 @@
   (setq python-shell-interpreter "ipython"
         python-shell-interpreter-args "--simple-prompt -i")
 
-  ;;changes syntax check from flymake to flycheck
+  ;; Changes syntax check from flymake to flycheck
+  ;; NOTE: Need flake8 installed
   (when (require 'flycheck nil t)
     (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
     (add-hook 'elpy-mode-hook 'flycheck-mode))
@@ -152,6 +153,9 @@
   ;;activates autopep8
   (require 'py-autopep8)
   (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+
+  ;; Use buffer directory to send to shell
+  (setq elpy-shell-use-project-root nil)
 
   (global-set-key (kbd "C-c C-r") 'python-shell-send-region)
   (global-set-key (kbd "C-t") 'transpose-chars)

@@ -105,7 +105,7 @@
     ("~/GoogleDrive/org/projects.org" "~/GoogleDrive/org/someday.org" "~/GoogleDrive/org/calendar.org")))
  '(package-selected-packages
    (quote
-    (diminish org-alert pdf-tools org-pdfview pyenv-mode pyenv-mode-auto org-edna ac-octave auctex-latexmk auctex-lua auctex magit flycheck py-autopep8 notmuch emojify mu4e-alert xterm-color cl-lib fill-column-indicator elpy auto-complete)))
+    (irony-eldoc diminish org-alert pdf-tools org-pdfview pyenv-mode pyenv-mode-auto org-edna ac-octave auctex-latexmk auctex-lua auctex magit flycheck py-autopep8 notmuch emojify mu4e-alert xterm-color cl-lib fill-column-indicator elpy auto-complete)))
  '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
