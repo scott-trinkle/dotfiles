@@ -35,95 +35,95 @@
 ** Org-mode
 #+BEGIN_SRC emacs-lisp :tangle yes
 
-  (setq org-directory "/Users/scotttrinkle/GoogleDrive/org/")
+  ;; (setq org-directory "/Users/scotttrinkle/GoogleDrive/org/")
 
-  ;; Key bindings
-  (global-set-key (kbd "C-c l") 'org-store-link)
-  (global-set-key (kbd "C-c a") 'org-agenda)
-  (global-set-key (kbd "C-c c") 'org-capture)
-  (global-set-key (kbd "C-c b") 'org-iswitchb)
+  ;; ;; Key bindings
+  ;; (global-set-key (kbd "C-c l") 'org-store-link)
+  ;; (global-set-key (kbd "C-c a") 'org-agenda)
+  ;; (global-set-key (kbd "C-c c") 'org-capture)
+  ;; (global-set-key (kbd "C-c b") 'org-iswitchb)
 
-  ;; TODO Keywords
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w)" "|" "CANCELED(c)" "DONE(d)")))
+  ;; ;; TODO Keywords
+  ;; (setq org-todo-keywords
+  ;;       '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w)" "|" "CANCELED(c)" "DONE(d)")))
 
-  (setq org-todo-keyword-faces
-        '(("TODO" . "pink")
-          ("NEXT" . "blue")
-          ("STARTED" . "yellow")
-          ("WAITING" . "orange")
-          ("CANCELED" . "red")
-          ("DONE" . "green")))
+  ;; (setq org-todo-keyword-faces
+  ;;       '(("TODO" . "pink")
+  ;;         ("NEXT" . "blue")
+  ;;         ("STARTED" . "yellow")
+  ;;         ("WAITING" . "orange")
+  ;;         ("CANCELED" . "red")
+  ;;         ("DONE" . "green")))
 
-  (defun org-summary-todo (n-done n-not-done)
-    "Switch entry to DONE when all subentries are done, to TODO otherwise."
-    (let (org-log-done org-log-states)  ; turn off logging
-      (org-todo (if (= n-not-done 0) "DONE" "TODO" ))))
-  (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+  ;; (defun org-summary-todo (n-done n-not-done)
+  ;;   "Switch entry to DONE when all subentries are done, to TODO otherwise."
+  ;;   (let (org-log-done org-log-states)  ; turn off logging
+  ;;     (org-todo (if (= n-not-done 0) "DONE" "TODO" ))))
+  ;; (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
-  (setq org-enforce-todo-dependencies t)
-  (setq org-log-done 'time)
+  ;; (setq org-enforce-todo-dependencies t)
+  ;; (setq org-log-done 'time)
 
-  ;; Tags
-  (setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("someday" . ?s)))
-  (setq org-tags-column -85)
+  ;; ;; Tags
+  ;; (setq org-tag-alist '(("@work" . ?w) ("@home" . ?h) ("someday" . ?s)))
+  ;; (setq org-tags-column -85)
 
-  ;; Agenda
-  (setq org-default-notes-file "projects.org")
-  (setq org-agenda-files (quote ("~/GoogleDrive/org/" "~/GoogleDrive/org/projects.org" "~/GoogleDrive/org/calendar.org" "~/GoogleDrive/org/someday.org")))
-  (setq org-deadline-warning-days 5)          
-  (setq org-archive-location "archive/datetree.org::datetree/* Finished Tasks")
+  ;; ;; Agenda
+  ;; (setq org-default-notes-file "projects.org")
+  ;; (setq org-agenda-files (quote ("~/GoogleDrive/org/" "~/GoogleDrive/org/projects.org" "~/GoogleDrive/org/calendar.org" "~/GoogleDrive/org/someday.org")))
+  ;; (setq org-deadline-warning-days 5)          
+  ;; (setq org-archive-location "archive/datetree.org::datetree/* Finished Tasks")
 
-  ;; Capture
-  (setq org-capture-templates 
-        (quote
-         (("t" "Todo [inbox]" entry (file+headline "~/GoogleDrive/org/projects.org" "Inbox")
-           "* %i%?"))))
+  ;; ;; Capture
+  ;; (setq org-capture-templates 
+  ;;       (quote
+  ;;        (("t" "Todo [inbox]" entry (file+headline "~/GoogleDrive/org/projects.org" "Inbox")
+  ;;          "* %i%?"))))
 
-  ;; Refiling
-  (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
-  (setq org-refile-use-outline-path 'file)
-  (setq org-refile-allow-creating-parent-nodes 'confirm)
+  ;; ;; Refiling
+  ;; (setq org-refile-targets '((org-agenda-files :maxlevel . 3)))
+  ;; (setq org-refile-use-outline-path 'file)
+  ;; (setq org-refile-allow-creating-parent-nodes 'confirm)
 
 
-  (add-hook 'org-load-hook
-            (lambda ()
-              (define-key org-mode-map (kbd "C-c n") 'org-next-link)
-              (define-key org-mode-map (kbd "C-c p") 'org-previous-link)))
+  ;; (add-hook 'org-load-hook
+  ;;           (lambda ()
+  ;;             (define-key org-mode-map (kbd "C-c n") 'org-next-link)
+  ;;             (define-key org-mode-map (kbd "C-c p") 'org-previous-link)))
 
-  ;; Custom behavior
-  ;;(setq org-startup-truncated nil)  ;; wrap lines
-  (setq org-startup-indented t)
-  (setq org-agenda-restore-windows-after-quit t)  ;; save window views
-  (eval-after-load 'org  ;; shortcut for creating elisp src
-    '(progn
-       (add-to-list 'org-structure-template-alist
-                    '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
+  ;; ;; Custom behavior
+  ;; ;;(setq org-startup-truncated nil)  ;; wrap lines
+  ;; (setq org-startup-indented t)
+  ;; (setq org-agenda-restore-windows-after-quit t)  ;; save window views
+  ;; (eval-after-load 'org  ;; shortcut for creating elisp src
+  ;;   '(progn
+  ;;      (add-to-list 'org-structure-template-alist
+  ;;                   '("e" "#+BEGIN_SRC emacs-lisp :tangle yes \n?\n#+END_SRC"))))
 
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
+  ;; (setq org-src-fontify-natively t)
+  ;; (setq org-src-tab-acts-natively t)
 
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+  ;; (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
 
-  ;;Spellcheck
-  (defun endless/org-ispell ()
-    "Configure `ispell-skip-region-alist' for `org-mode'."
-    (make-local-variable 'ispell-skip-region-alist)
-    (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
-    (add-to-list 'ispell-skip-region-alist '("~" "~"))
-    (add-to-list 'ispell-skip-region-alist '("=" "="))
-    (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
-  (add-hook 'org-mode-hook #'endless/org-ispell)
+  ;; ;;Spellcheck
+  ;; (defun endless/org-ispell ()
+  ;;   "Configure `ispell-skip-region-alist' for `org-mode'."
+  ;;   (make-local-variable 'ispell-skip-region-alist)
+  ;;   (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+  ;;   (add-to-list 'ispell-skip-region-alist '("~" "~"))
+  ;;   (add-to-list 'ispell-skip-region-alist '("=" "="))
+  ;;   (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
+  ;; (add-hook 'org-mode-hook #'endless/org-ispell)
 
 #+END_SRC
 ** Shell
 #+BEGIN_SRC emacs-lisp :tangle yes 
   (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
   (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
-  (setenv "PATH" (shell-command-to-string "source ~/.bash_profile; echo -n $PATH"))
+  ;; (setenv "PATH" (shell-command-to-string "source ~/.bash_profile; echo -n $PATH"))
 
-  ;; I think this makes it load .bash_profile. Login vs. interactive shell?
-  (setq shell-command-switch "-lc") 
+  ;; ;; I think this makes it load .bash_profile. Login vs. interactive shell?
+  ;; (setq shell-command-switch "-lc") 
 
   (global-set-key (kbd "C-x C-p") 'shell)
 
@@ -254,9 +254,6 @@
   (eval-after-load 'flycheck
     '(add-hook 'flycheck-mod-hook #'flycheck-irony-setup))
 
-
-
-
 #+END_SRC
 ** Octave
 #+BEGIN_SRC emacs-lisp :tangle yes 
@@ -381,16 +378,16 @@
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
 
-  ;; Display settings
-  (setq mac-allow-anti-aliasing t)
+  ;; ;; Display settings
+  ;; (setq mac-allow-anti-aliasing t)
 #+END_SRC
 ** Font
 #+BEGIN_SRC emacs-lisp :tangle yes 
-  (add-to-list 'default-frame-alist '(font . "Monaco 13"))
-  (if (string-equal system-type "darwin")
-      (set-fontset-font "fontset-default"
-                        'unicode
-                        '("Monaco" . "iso10646-1")))
+  ;; (add-to-list 'default-frame-alist '(font . "Monaco 13"))
+  ;; (if (string-equal system-type "darwin")
+  ;;     (set-fontset-font "fontset-default"
+  ;;                       'unicode
+  ;;                       '("Monaco" . "iso10646-1")))
 
   (setq frame-resize-pixelwise 'true)
   (setq line-spacing 0)
@@ -597,7 +594,7 @@
 #+END_SRC
 ** Fullscreen
 #+BEGIN_SRC emacs-lisp :tangle yes 
-  (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
+  ;; (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
 #+END_SRC
 ** Custom commands
 #+BEGIN_SRC emacs-lisp :tangle yes 
@@ -606,10 +603,10 @@
 #+END_SRC
 * Layout windows
 #+BEGIN_SRC emacs-lisp :tangle yes 
-  (when window-system (set-frame-size (selected-frame) 180 48))
-  (find-file "~/GoogleDrive/org/projects.org")
-  (find-file "~/.emacs.d/scott.org")
-  (shell "*shell*")
-  (add-hook 'after-init-hook (lambda () (org-agenda nil "n")))
-  (switch-to-buffer "*Org Agenda*")
+  ;; (when window-system (set-frame-size (selected-frame) 180 48))
+  ;; (find-file "~/GoogleDrive/org/projects.org")
+  ;; (find-file "~/.emacs.d/scott.org")
+  ;; (shell "*shell*")
+  ;; (add-hook 'after-init-hook (lambda () (org-agenda nil "n")))
+  ;; (switch-to-buffer "*Org Agenda*")
 #+END_SRC
