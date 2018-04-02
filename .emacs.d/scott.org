@@ -598,15 +598,16 @@
 #+END_SRC
 ** Custom commands
 #+BEGIN_SRC emacs-lisp :tangle yes 
-  (setq custom-file "~/.emacs.d/custom.el")
-  (load custom-file 'noerror)
+  ;(setq custom-file "~/.emacs.d/custom.el")
+  ;(load custom-file 'noerror)
 #+END_SRC
 * Layout windows
 #+BEGIN_SRC emacs-lisp :tangle yes 
-  ;; (when window-system (set-frame-size (selected-frame) 180 48))
+  (when window-system (set-frame-size (selected-frame) 90 24))
   ;; (find-file "~/GoogleDrive/org/projects.org")
-  ;; (find-file "~/.emacs.d/scott.org")
-  ;; (shell "*shell*")
+  (find-file "~/.emacs.d/scott.org")
+  (shell "*shell*")
   ;; (add-hook 'after-init-hook (lambda () (org-agenda nil "n")))
   ;; (switch-to-buffer "*Org Agenda*")
+  (set-keyboard-coding-system nil)
 #+END_SRC
