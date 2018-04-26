@@ -24,6 +24,11 @@
   (setq user-mail-address "tscott.trinkle@gmail.com")
   (setq calendar-location-name "Chicago, Il")
 #+END_SRC
+** Other necessary packages
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package diminish
+      :ensure t)
+#+END_SRC
 * Modes
 ** Abbrev
  Sort of like a custom autocorrect. Not currently implemented, but
@@ -60,6 +65,7 @@
 #+END_SRC
 ** Python
 #+BEGIN_SRC emacs-lisp :tangle yes 
+
   (elpy-enable)
 
   (setq elpy-rpc-python-command "python3")
@@ -269,7 +275,10 @@
 ** Misc (autocomplete/html)
 #+BEGIN_SRC emacs-lisp :tangle yes 
   ;;Use autocomplete
-  (global-auto-complete-mode t)
+  (use-package auto-complete
+      :ensure t
+      :config
+          (global-auto-complete-mode t))
 
   ;;Read HTML
   (setq mm-text-html-renderer 'w3m)
@@ -313,7 +322,7 @@
 ** Font
 #+BEGIN_SRC emacs-lisp :tangle yes 
 
-  (add-to-list 'default-frame-alist '(font . "Monaco 14"))
+  ;;(add-to-list 'default-frame-alist '(font . "Monaco 14"))
 
   ;; Fixes fonts for non-english unicode characters?
   (if (string-equal system-type "darwin")
