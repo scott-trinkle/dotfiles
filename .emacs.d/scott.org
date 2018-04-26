@@ -113,7 +113,7 @@
     (add-to-list 'ispell-skip-region-alist '("~" "~"))
     (add-to-list 'ispell-skip-region-alist '("=" "="))
     (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
-  (add-hook 'org-mode-hook #'endless/org-ispell)
+    (add-hook 'org-mode-hook #'endless/org-ispell)
 
 #+END_SRC
 ** Shell
@@ -133,8 +133,11 @@
 #+END_SRC
 ** Magit
 #+BEGIN_SRC emacs-lisp :tangle yes 
-  (global-set-key (kbd "C-x g") 'magit-status)
-  (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
+  (use-package magit
+      :ensure t
+      :config 
+      (global-set-key (kbd "C-x g") 'magit-status)
+      (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup))
 #+END_SRC
 ** Python
 #+BEGIN_SRC emacs-lisp :tangle yes 
@@ -151,14 +154,24 @@
     (add-hook 'elpy-mode-hook 'flycheck-mode))
 
   ;;activates autopep8
-  (require 'py-autopep8)
-  (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+  (use-package py-autopep8
+      :ensure t
+      :config 
+      (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save))
 
   ;; Use buffer directory to send to shell
   (setq elpy-shell-use-project-root nil)
 
   (global-set-key (kbd "C-c C-r") 'python-shell-send-region)
   (global-set-key (kbd "C-t") 'transpose-chars)
+
+  (use-package cython-mode
+      :ensure t
+      :config (add-hook 'cython-mode-hook 'flycheck-mode))
+
+  (use-package pyvenv
+      :ensure t)
+
 #+END_SRC
 ** Cpp
 #+BEGIN_SRC emacs-lisp :tangle yes 
@@ -254,39 +267,33 @@
   (eval-after-load 'flycheck
     '(add-hook 'flycheck-mod-hook #'flycheck-irony-setup))
 
-
-
-
 #+END_SRC
-** Octave
+** Markdown
 #+BEGIN_SRC emacs-lisp :tangle yes 
-  (autoload 'octave-mode "octave-mod" "Loading octave-mode" t)
-  (add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
-
-  (add-hook 'octave-mode-hook
-            (lambda ()
-              (setq tab-width 4)
-              (abbrev-mode 1)
-              (auto-fill-mode 1)
-              (if (eq window-system 'x)
-                  (font-lock-mode 1))))
+  (use-package markdown-mode
+    :ensure t)
 #+END_SRC
 ** Docview
 #+BEGIN_SRC emacs-lisp :tangle yes 
   (setq doc-view-resolution 300)
 #+END_SRC
-** Fill column indicator
+** Fill column indicator and column-enforce
 #+BEGIN_SRC emacs-lisp :tangle yes 
-  (require 'fill-column-indicator)
-  (setq fci-rule-color "white")
-  (setq-default fill-column 80)
-  (setq fci-rule-column 80)
-  (setq fci-rule-use-dashes nil)
+    (use-package fill-column-indicator
+     :ensure t
+     :init
+       (setq fci-rule-color "white")
+       (setq-default fill-column 80)
+       (setq fci-rule-column 80)
+       (setq fci-rule-use-dashes nil))
+
+  (use-package column-enforce-mode
+    :ensure t)
 #+END_SRC
 ** LaTeX and AUCTeX
 #+BEGIN_SRC emacs-lisp :tangle yes 
   (setq TeX-PDF-mode t) 
-  (setq TeX-auto-save t)
+  (setq TeX-auto-save nil)
   (setq TeX-parse-self t)
   (setq TeX-save-query nil) ;;autosave before compiling
 
@@ -386,7 +393,9 @@
 #+END_SRC
 ** Font
 #+BEGIN_SRC emacs-lisp :tangle yes 
-  (add-to-list 'default-frame-alist '(font . "Monaco 13"))
+  (add-to-list 'default-frame-alist '(font . "Monaco 14"))
+
+  ;; Fixes fonts for non-english unicode characters?
   (if (string-equal system-type "darwin")
       (set-fontset-font "fontset-default"
                         'unicode
@@ -607,9 +616,5 @@
 * Layout windows
 #+BEGIN_SRC emacs-lisp :tangle yes 
   (when window-system (set-frame-size (selected-frame) 180 48))
-  (find-file "~/GoogleDrive/org/projects.org")
-  (find-file "~/.emacs.d/scott.org")
   (shell "*shell*")
-  (add-hook 'after-init-hook (lambda () (org-agenda nil "n")))
-  (switch-to-buffer "*Org Agenda*")
 #+END_SRC

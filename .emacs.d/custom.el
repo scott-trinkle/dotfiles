@@ -79,16 +79,16 @@
       ((agenda ""
 	       ((org-agenda-start-on-weekday nil)
 		(org-agenda-span 1)))
-       (todo "NEXT"
-	     ((org-agenda-overriding-header "Unscheduled Next Actions")
-	      (org-agenda-tag-filter-preset
-	       (quote nil))
+       (todo "STARTED"
+	     ((org-agenda-overriding-header "Unscheduled Actions I Have Started")
 	      (org-agenda-skip-function
 	       (quote
 		(org-agenda-skip-entry-if
 		 (quote scheduled))))))
-       (todo "STARTED"
-	     ((org-agenda-overriding-header "Unscheduled Actions I Have Started")
+       (todo "NEXT"
+	     ((org-agenda-overriding-header "Unscheduled Next Actions")
+	      (org-agenda-tag-filter-preset
+	       (quote nil))
 	      (org-agenda-skip-function
 	       (quote
 		(org-agenda-skip-entry-if
@@ -105,7 +105,7 @@
     ("~/GoogleDrive/org/projects.org" "~/GoogleDrive/org/someday.org" "~/GoogleDrive/org/calendar.org")))
  '(package-selected-packages
    (quote
-    (irony-eldoc diminish org-alert pdf-tools org-pdfview pyenv-mode pyenv-mode-auto org-edna ac-octave auctex-latexmk auctex-lua auctex magit flycheck py-autopep8 notmuch emojify mu4e-alert xterm-color cl-lib fill-column-indicator elpy auto-complete)))
+    (column-enforce-mode markdown-mode irony-eldoc diminish org-alert pdf-tools org-pdfview pyenv-mode pyenv-mode-auto org-edna ac-octave auctex-latexmk auctex-lua auctex magit flycheck py-autopep8 notmuch emojify mu4e-alert xterm-color cl-lib fill-column-indicator elpy auto-complete)))
  '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
